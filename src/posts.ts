@@ -13,7 +13,9 @@ const modules = import.meta.glob('../posts/*.md', { eager: true, as: 'raw' });
 export const posts: Post[] = Object.entries(modules)
     .map(([path, raw]) => {
         const parsed = fm<Post>(raw as string);
-        const filename = path.split('/').pop()!.replace('.md', '');
+        const filename = path
+            .split('/').pop()!.replace('.md', '')
+            .split("-")[0];
         const date = filename.replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3');
 
         return {
