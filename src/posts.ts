@@ -1,31 +1,80 @@
 import fm from 'front-matter';
 
-export interface Post {
+export interface BlogPost {
     title: string;
     slug: string;
     date: string;
     imagePath: string;
     content: string;
     fileName: string;
+    type: "blogpost"
 }
+
+export interface ImageGallery {
+    title: string;
+    slug: string;
+    date: string;
+    imagePath: string;
+    fileName: string;
+    images: {
+        path: string,
+        alt: string,
+        caption?: string
+    }[];
+    type: "imagegallery"
+}
+
+type FrontMatter =
+    | {
+    type: "blogpost";
+    title: string;
+    slug: string;
+    imagePath: string;
+}
+    | {
+    type: "imagegallery";
+    title: string;
+    slug: string;
+    imagePath: string;
+    images: {
+        path: string;
+        alt: string;
+        caption?: string;
+    }[];
+};
 
 const modules = import.meta.glob('../posts/*.md', { eager: true, as: 'raw' });
 
-export const posts: Post[] = Object.entries(modules)
+export const posts: (BlogPost | ImageGallery)[] = Object.entries(modules)
     .map(([path, raw]) => {
-        const parsed = fm<Post>(raw as string);
+        const parsed = fm<FrontMatter>(raw as string);
         const filenameWithoutFileFormatSuffix = path
             .split('/').pop()!.replace('.md', '');
         const dateFromFileName = filenameWithoutFileFormatSuffix.split("-")[0];
         const date = dateFromFileName.replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3');
 
-        return {
-            title: parsed.attributes.title,
-            slug: parsed.attributes.slug,
-            date: date,
-            imagePath: parsed.attributes.imagePath,
-            content: parsed.body,
-            fileName: filenameWithoutFileFormatSuffix
-        };
+        if (parsed.attributes.type === "blogpost") {
+            return {
+                title: parsed.attributes.title,
+                slug: parsed.attributes.slug,
+                date,
+                imagePath: parsed.attributes.imagePath,
+                fileName: filenameWithoutFileFormatSuffix,
+                content: parsed.body,
+                type: parsed.attributes.type
+            };
+        } else if (parsed.attributes.type === "imagegallery") {
+            return {
+                title: parsed.attributes.title,
+                slug: parsed.attributes.slug,
+                date,
+                imagePath: parsed.attributes.imagePath,
+                fileName: filenameWithoutFileFormatSuffix,
+                images: parsed.attributes.images,
+                type: parsed.attributes.type
+            };
+        } else {
+            throw Error("Illegal post type")
+        }
     })
     .sort((a, b) => b.fileName.localeCompare(a.fileName));
