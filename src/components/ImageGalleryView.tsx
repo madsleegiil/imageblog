@@ -70,7 +70,7 @@ export const ImageGalleryView: FunctionComponent<Props> = ({ imageGallery }) => 
                         <div className="block sm:hidden">
                             <img src={image.path} alt={image.alt} className="w-full h-full object-cover"/>
                             {image.caption && (
-                                <p className="mt-1 text-gray-700 text-center text-sm">{image.caption}</p>
+                                <p className="mt-1 text-gray-700 text-sm">{image.caption}</p>
                             )}
                         </div>
                     </div>
