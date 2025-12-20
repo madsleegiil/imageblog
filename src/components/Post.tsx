@@ -20,7 +20,7 @@ const Post: React.FC<PostProps> = ({ posts }) => {
     }
 
     return (
-        <div className="blogpost block w-full">
+        <div className="block w-full">
             { post.type === "blogpost" && <BlogPostView blogPost={post} />}
             { post.type === "imagegallery" && <ImageGalleryView imageGallery={post} />}
         </div>

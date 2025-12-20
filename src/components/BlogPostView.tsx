@@ -9,7 +9,7 @@ type Props = {
 
 export const BlogPostView: FunctionComponent<Props> = ({blogPost}) => {
     return (
-        <div>
+        <div className="blogpost">
             <h1 className="text-3xl font-bold">{blogPost.title}</h1>
             <p className="text-gray-700">{formatDateReadable(blogPost.date)}</p>
             <div className="mt-4">

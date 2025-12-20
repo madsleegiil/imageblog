@@ -63,8 +63,16 @@ export const ImageGalleryView: FunctionComponent<Props> = ({ imageGallery }) => 
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                 {imageGallery.images.map((image, index) => (
-                    <div key={index} className="overflow-hidden rounded-md cursor-pointer" onClick={() => openModal(index)}>
-                        <img src={image.path} alt={image.alt} className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-200"/>
+                    <div key={index} className="overflow-hidden mb-4 sm:mb-0">
+                        <div className="hidden sm:block cursor-pointer" onClick={() => openModal(index)}>
+                            <img src={image.path} alt={image.alt} className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-200"/>
+                        </div>
+                        <div className="block sm:hidden">
+                            <img src={image.path} alt={image.alt} className="w-full h-full object-cover"/>
+                            {image.caption && (
+                                <p className="mt-1 text-gray-700 text-center text-sm">{image.caption}</p>
+                            )}
+                        </div>
                     </div>
                 ))}
             </div>
@@ -78,7 +86,7 @@ export const ImageGalleryView: FunctionComponent<Props> = ({ imageGallery }) => 
                 >
                     <div className="relative max-w-4xl max-h-full" onClick={(e) => e.stopPropagation()}>
                         <figure>
-                            <img src={currentImage.path} alt={currentImage.alt} className="max-w-full max-h-[90vh] rounded-md"/>
+                            <img src={currentImage.path} alt={currentImage.alt} className="max-w-full max-h-[90vh]"/>
                             {currentImage.caption && (
                                 <figcaption className="mt-2 text-white text-center">
                                     {currentImage.caption}
