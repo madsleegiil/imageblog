@@ -10,6 +10,7 @@ export const ImageGalleryView: FunctionComponent<Props> = ({ imageGallery }) => 
     const [modalOpen, setModalOpen] = useState(false);
     const [currentIndex, setCurrentIndex] = useState<number | null>(null);
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
+    const [touchStartY, setTouchStartY] = useState<number | null>(null);
 
     const openModal = (index: number) => {
         setCurrentIndex(index);
@@ -44,14 +45,30 @@ export const ImageGalleryView: FunctionComponent<Props> = ({ imageGallery }) => 
 
     const handleTouchStart = (e: React.TouchEvent) => {
         setTouchStartX(e.touches[0].clientX);
+        setTouchStartY(e.touches[0].clientY);
     };
 
     const handleTouchEnd = (e: React.TouchEvent) => {
-        if (touchStartX === null) return;
-        const deltaX = e.changedTouches[0].clientX - touchStartX;
-        if (deltaX > 50) prevImage();
-        else if (deltaX < -50) nextImage();
+        if (touchStartX === null || touchStartY === null) return;
+        const endX = e.changedTouches[0].clientX;
+        const endY = e.changedTouches[0].clientY;
+        const deltaX = endX - touchStartX;
+        const deltaY = endY - touchStartY;
+
+        // Swipe up
+        if (deltaY < -80 && Math.abs(deltaY) > Math.abs(deltaX)) {
+            closeModal();
+        }
+        // Swipe right
+        else if (deltaX > 50) {
+            prevImage();
+        }
+        // Swipe left
+        else if (deltaX < -50) {
+            nextImage();
+        }
         setTouchStartX(null);
+        setTouchStartY(null);
     };
 
     const currentImage = currentIndex !== null ? imageGallery.images[currentIndex] : null;
@@ -61,17 +78,11 @@ export const ImageGalleryView: FunctionComponent<Props> = ({ imageGallery }) => 
             <h1 className="text-3xl font-bold mb-2">{imageGallery.title}</h1>
             <p className="text-gray-700 mb-4">{formatDateReadable(imageGallery.date)}</p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-0.5">
                 {imageGallery.images.map((image, index) => (
-                    <div key={index} className="overflow-hidden mb-4 sm:mb-0">
-                        <div className="hidden sm:block cursor-pointer" onClick={() => openModal(index)}>
+                    <div key={index} className="overflow-hidden sm:mb-0">
+                        <div className="sm:block cursor-pointer" onClick={() => openModal(index)}>
                             <img src={image.path} alt={image.alt} className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-200"/>
-                        </div>
-                        <div className="block sm:hidden">
-                            <img src={image.path} alt={image.alt} className="w-full h-full object-cover"/>
-                            {image.caption && (
-                                <p className="mt-1 text-gray-700 text-sm">{image.caption}</p>
-                            )}
                         </div>
                     </div>
                 ))}
