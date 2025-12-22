@@ -77,6 +77,7 @@ export const ImageGalleryView: FunctionComponent<Props> = ({ imageGallery }) => 
         <div>
             <h1 className="text-3xl font-bold mb-2">{imageGallery.title}</h1>
             <p className="text-gray-700 mb-4">{formatDateReadable(imageGallery.date)}</p>
+            <p className="my-4">{imageGallery.introduction}</p>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-0.5">
                 {imageGallery.images.map((image, index) => (

@@ -17,7 +17,8 @@ export interface ImageGallery {
     imagePath: string;
     fileName: string;
     images: Image[];
-    type: "imagegallery"
+    type: "imagegallery";
+    introduction: string;
 }
 
 export interface Image {
@@ -43,6 +44,7 @@ type FrontMatter =
         alt: string;
         caption?: string;
     }[];
+    introduction: string;
 };
 
 const modules = import.meta.glob('../posts/*.md', { eager: true, as: 'raw' });
@@ -73,7 +75,8 @@ export const posts: (BlogPost | ImageGallery)[] = Object.entries(modules)
                 imagePath: parsed.attributes.imagePath,
                 fileName: filenameWithoutFileFormatSuffix,
                 images: parsed.attributes.images,
-                type: parsed.attributes.type
+                type: parsed.attributes.type,
+                introduction: parsed.body
             };
         } else {
             throw Error("Illegal post type")
