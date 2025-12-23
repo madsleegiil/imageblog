@@ -7,7 +7,8 @@ export interface BlogPost {
     imagePath: string;
     content: string;
     fileName: string;
-    type: "blogpost"
+    type: "blogpost",
+    tags: string[];
 }
 
 export interface ImageGallery {
@@ -19,6 +20,7 @@ export interface ImageGallery {
     images: Image[];
     type: "imagegallery";
     introduction: string;
+    tags: string[];
 }
 
 export interface Image {
@@ -33,6 +35,7 @@ type FrontMatter =
     title: string;
     slug: string;
     imagePath: string;
+    tags: string[];
 }
     | {
     type: "imagegallery";
@@ -45,6 +48,7 @@ type FrontMatter =
         caption?: string;
     }[];
     introduction: string;
+    tags: string[];
 };
 
 const modules = import.meta.glob('../posts/*.md', { eager: true, as: 'raw' });
@@ -65,7 +69,8 @@ export const posts: (BlogPost | ImageGallery)[] = Object.entries(modules)
                 imagePath: parsed.attributes.imagePath,
                 fileName: filenameWithoutFileFormatSuffix,
                 content: parsed.body,
-                type: parsed.attributes.type
+                type: parsed.attributes.type,
+                tags: parsed.attributes.tags
             };
         } else if (parsed.attributes.type === "imagegallery") {
             return {
@@ -76,10 +81,15 @@ export const posts: (BlogPost | ImageGallery)[] = Object.entries(modules)
                 fileName: filenameWithoutFileFormatSuffix,
                 images: parsed.attributes.images,
                 type: parsed.attributes.type,
-                introduction: parsed.body
+                introduction: parsed.body,
+                tags: parsed.attributes.tags
             };
         } else {
             throw Error("Illegal post type")
         }
     })
     .sort((a, b) => b.fileName.localeCompare(a.fileName));
+
+export const allTags = (): string[] => {
+    return  [...new Set(posts.map((post) => post.tags).flat())];
+}
