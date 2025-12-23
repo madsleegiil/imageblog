@@ -35,7 +35,7 @@ function App() {
 
     return (
         <div>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4">
                 {allTags().map((tag, index) => (
                     <div key={`tag-${index}`}  className={`${tagColor(tag)} bg-yellow-100 px-4 py-2 cursor-pointer rounded-sm`} onClick={() => onTagClick(tag)}>{tag}</div>
                 ))}
