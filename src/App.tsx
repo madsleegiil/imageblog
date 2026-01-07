@@ -49,7 +49,11 @@ function App() {
                     <Link to={`/blog/${post.slug}`} key={post.slug}
                           className="block bg-gray-200 hover:bg-gray-300 transition-colors w-full">
                         {post.imagePath && (
-                            <img src={post.imagePath} alt="Eksempelbilde for posten" className="w-full"/>
+                            <img
+                                src={post.imagePath}
+                                alt="Eksempelbilde for posten"
+                                className="w-full h-64 object-cover"
+                            />
                         )}
                         <div className="p-6">
                             <h3 className="text-2xl font-bold">{post.title}</h3>
