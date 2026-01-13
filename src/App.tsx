@@ -1,71 +1,64 @@
-import {allTags, type BlogPost, type ImageGallery, posts} from "./posts.ts";
-import {Link} from "react-router-dom";
-import {formatDateReadable} from "./utils.ts";
-import {useState} from "react";
-
+import { useState } from "react";
 
 function App() {
-    const useFilter = false;
-    const [filteredPosts, setFilteredPosts] = useState<(BlogPost | ImageGallery)[]>(posts);
-    const [activeTag, setActiveTags] = useState<string[]>([]);
+    const [lang, setLang] = useState("no");
 
-    const isActiveTag = (tag: string) => {
-        return activeTag.includes(tag);
-    }
-
-    const tagColor = (tag: string) => {
-        return isActiveTag(tag) ? 'bg-yellow-400' : 'bg-yellow-200';
-    }
-
-    const onTagClick = (tag: string) => {
-        const newActiveTags = isActiveTag(tag) ? activeTag.filter(t => t !== tag) : [...activeTag, tag];
-        setActiveTags(newActiveTags);
-        filterPosts(newActiveTags);
-    }
-
-    const filterPosts = (newActiveTags: string[]) => {
-        if (newActiveTags.length === 0) {
-            setFilteredPosts(posts);
-        } else {
-            const newFilteredPosts = posts.filter((post) => {
-                return post.tags.some(tag => newActiveTags.includes(tag))
-            })
-            setFilteredPosts(newFilteredPosts);
-        }
-    }
+    const content = {
+        no: "Hei, jeg er Mads.",
+        en: "Hi, I'm Mads.",
+        es: "Hola, soy Mads.",
+        ko: "안녕하세요, 저는 마츠입니다."
+    };
 
     return (
-        <div>
-            {useFilter &&
-                <div className="flex flex-wrap gap-2">
-                    {allTags().map((tag, index) => (
-                        <div key={`tag-${index}`} className={`${tagColor(tag)} px-4 py-2 cursor-pointer rounded-sm`}
-                             onClick={() => onTagClick(tag)}>{tag}</div>
-                    ))}
+        <div className="min-h-screen bg-slate-900 flex justify-center pt-20 md:pt-0 md:items-center px-6">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-12">
+
+                <img
+                    src="/mads.jpeg"
+                    alt="Mads"
+                    className="w-44 h-44 md:w-52 md:h-52 rounded-full object-cover"
+                />
+
+                <div className="w-72 sm:w-80 md:w-96 text-center md:text-left md:mt-6">
+                    <div className="flex justify-center md:justify-start gap-4 text-2xl mb-4 cursor-pointer select-none">
+                        <span onClick={() => setLang("no")} title="Norsk">🇳🇴</span>
+                        <span onClick={() => setLang("en")} title="English">🇬🇧</span>
+                        <span onClick={() => setLang("es")} title="Español">🇪🇸</span>
+                        <span onClick={() => setLang("ko")} title="한국어">🇰🇷</span>
+                    </div>
+
+                    <div className="min-h-[3.5rem]">
+                        <h1 className="text-3xl font-semibold text-white mb-4 leading-snug">
+                            {content[lang]}
+                        </h1>
+                    </div>
+
+                    <div className="flex justify-center md:justify-start gap-5 text-2xl">
+                        <a
+                            href="http://www.flickr.com/photos/madsgiil/"
+                            target="_blank"
+                            rel="noreferrer"
+                            title="Flickr"
+                            className="text-slate-300 hover:text-white transition-colors"
+                        >
+                            📷
+                        </a>
+
+                        <a
+                            href="https://www.linkedin.com/in/mads-lee-giil-94940a1a6/"
+                            target="_blank"
+                            rel="noreferrer"
+                            title="LinkedIn"
+                            className="text-slate-300 hover:text-white transition-colors"
+                        >
+                            💼
+                        </a>
+                    </div>
                 </div>
-            }
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
-                {filteredPosts.map((post) => (
-                    <Link to={`/blog/${post.slug}`} key={post.slug}
-                          className="block bg-gray-200 hover:bg-gray-300 transition-colors w-full">
-                        {post.imagePath && (
-                            <img
-                                src={post.imagePath}
-                                alt="Eksempelbilde for posten"
-                                className="w-full h-64 object-cover"
-                            />
-                        )}
-                        <div className="p-6">
-                            <h3 className="text-2xl font-bold">{post.title}</h3>
-                            <p className="text-gray-700">
-                                {formatDateReadable(post.date)}
-                            </p>
-                        </div>
-                    </Link>
-                ))}
             </div>
         </div>
-    )
+    );
 }
 
-export default App
+export default App;
